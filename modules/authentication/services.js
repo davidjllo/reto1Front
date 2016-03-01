@@ -3,14 +3,16 @@
 angular.module('Authentication')
 
 .factory('AuthenticationService',
-    ['Base64', '$http', '$cookieStore', '$rootScope', '$timeout',
+    ['Base64', '$http', '$cookieStore', '$rootScope', '$timeout','angular-md5',
     function (Base64, $http, $cookieStore, $rootScope, $timeout) {
         var service = {};
+        var urlBase="http://10.131.137.200/reto1controller/dataAccess.php?";
 
-        service.Login = function (username, password, callback) {
+        service.Login = function (username, password, callback, angular-md5) {
 
             /* Dummy authentication for testing, uses $timeout to simulate api call
              ----------------------------------------------*/
+            /*
             $timeout(function () {
                 var response = { success: username === 'test' && password === 'test' };
                 if (!response.success) {
@@ -18,14 +20,16 @@ angular.module('Authentication')
                 }
                 callback(response);
             }, 1000);
-
+            */
 
             /* Use this for real authentication
              ----------------------------------------------*/
-            //$http.post('/api/authenticate', { username: username, password: password })
-            //    .success(function (response) {
-            //        callback(response);
-            //    });
+             var hash = angular-md5.createHash(password || '');
+            $http.get(urlBase+'op=1&user='+username+'&pass='+hash)
+                .success(function (response) {
+                    callback(response);
+                    console.log("login succesful");
+                });
 
         };
 
